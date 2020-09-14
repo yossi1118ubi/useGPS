@@ -10,22 +10,28 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MKMapViewDelegate {
     /// ロケーションマネージャ
     var locationManager: CLLocationManager!
     
     //更新を止めるFlag
     var pause: Bool = false
-    
+
     //位置情報
     var location: CLLocation?
+    
+    //ひとつ前の位置情報
+    var previousLocation: CLLocation?
     // 緯度
     var latitude: CLLocationDegrees?
     // 経度
     var longitude: CLLocationDegrees?
     
     //ピンを格納するStack
-    var pinStack = Stack()
+    var pinStack = StackPin()
+    
+    //polyを格納するStack
+    var polyStack = StackPoly()
     
     
     
@@ -37,6 +43,8 @@ class ViewController: UIViewController {
         
         // ロケーションマネージャのセットアップ
         setupLocationManager()
+        
+        map.delegate = self
         
     }
     
@@ -87,7 +95,10 @@ class ViewController: UIViewController {
         } else if status == .authorizedWhenInUse {
             self.printLatitude.text = String(self.latitude!)
             self.printLongitude.text = String(self.longitude!)
+            //mapにピンを追加
             pinOnMap()
+            //ピンを結んで軌跡を生成
+            addTrajectory()
         }
         
     }
@@ -135,22 +146,52 @@ class ViewController: UIViewController {
         
     }
     
+    func addTrajectory(){
+        if let targetCoordinate = self.location?.coordinate{
+                print("#####targetの中")
+                print("target\(targetCoordinate)")
+                if let previousTargetCoordinate = self.previousLocation?.coordinate{
+                    print("######\(previousTargetCoordinate)")
+                    print("####previousの中")
+                    let coordinates = [targetCoordinate, previousTargetCoordinate]
+                    let polyLine = MKPolygon(coordinates: coordinates, count: coordinates.count)
+                    self.map.addOverlay(polyLine)
+                    //スタックにプッシュ
+                    polyStack.push(polyPush: polyLine)
+                
+                }
+        }
+        print("$$$$$$リターン")
+    }
+    
     //リセットボタン(ピンを削除)
     @IBAction func reset(_ sender: Any) {
 
-        for pins in pinStack.stackArray{
+        for _ in pinStack.stackArray{
             if let pin = pinStack.pop() {
                 self.map.removeAnnotation(pin)
-                print("削除前: \(pinStack.stackArray)")
-                print("\(pin)を削除しました")
-                print("削除後: \(pinStack.stackArray)")
             }
-            print("#####\(pins)")
         }
+        for _ in polyStack.stackArray{
+            if let poly = polyStack.pop(){
+                self.map.removeOverlay(poly)
+            }
+        }
+        
     }
 
     //マップ
     @IBOutlet weak var map: MKMapView!
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer{
+        print("###overlay: \(overlay)")
+        
+        let polylineRenderer = MKPolylineRenderer(overlay: overlay)
+        polylineRenderer.strokeColor = .blue
+        polylineRenderer.lineWidth = 2.0
+        print("mapViewの中の方")
+        return polylineRenderer
+    }
     
     
 }
@@ -162,6 +203,7 @@ extension ViewController: CLLocationManagerDelegate {
     ///   - manager: ロケーションマネージャ
     ///   - locations: 位置情報
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.previousLocation = location ?? nil
         self.location = locations.first
         self.latitude = location?.coordinate.latitude
         self.longitude = location?.coordinate.longitude
