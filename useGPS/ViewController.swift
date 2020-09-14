@@ -14,10 +14,13 @@ class ViewController: UIViewController {
     /// ロケーションマネージャ
     var locationManager: CLLocationManager!
     
+    //位置情報
+    var location: CLLocation?
     // 緯度
-    var latitudeNow: String = ""
+    var latitude: CLLocationDegrees?
     // 経度
-    var longitudeNow: String = ""
+    var longitude: CLLocationDegrees?
+    
 
 
     override func viewDidLoad() {
@@ -63,10 +66,9 @@ class ViewController: UIViewController {
         if status == .denied {
             showAlert()
         } else if status == .authorizedWhenInUse {
-            print("緯度: \(self.latitudeNow)")
-            print("経度: \(self.longitudeNow)")
-            self.printLatitude.text = latitudeNow
-            self.printLongitude.text = longitudeNow
+            self.printLatitude.text = String(self.latitude!)
+            self.printLongitude.text = String(self.longitude!)
+            pinOnMap()
         }
         
     }
@@ -92,6 +94,25 @@ class ViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    func pinOnMap(){
+        
+        if let targetCoordinate = self.location?.coordinate{
+        
+            let pin = MKPointAnnotation()
+            
+            //ピンの奥歯遺書に緯度経度を設定
+            pin.coordinate = targetCoordinate
+            
+            self.map.addAnnotation(pin)
+            
+            //緯度経度を中心に半径500mの範囲を表示
+            self.map.region = MKCoordinateRegion(center: targetCoordinate, latitudinalMeters: 500.0, longitudinalMeters: 500.0)
+            
+        }
+        
+        
+    }
+    
     //リセットボタン
     @IBAction func reset(_ sender: Any) {
         self.printLatitude.text = "ここに緯度を表示します"
@@ -111,12 +132,9 @@ extension ViewController: CLLocationManagerDelegate {
     ///   - manager: ロケーションマネージャ
     ///   - locations: 位置情報
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations.first
-        let latitude = location?.coordinate.latitude
-        let longitude = location?.coordinate.longitude
-        // 位置情報を格納する
-        self.latitudeNow = String(latitude!)
-        self.longitudeNow = String(longitude!)
+        self.location = locations.first
+        self.latitude = location?.coordinate.latitude
+        self.longitude = location?.coordinate.longitude
     }
 }
 
