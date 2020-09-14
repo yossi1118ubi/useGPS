@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF085E0A250F1438006F3B55 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF085E09250F1438006F3B55 /* Stack.swift */; };
 		CFE7F588250EF50E003C7F3D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE7F587250EF50E003C7F3D /* AppDelegate.swift */; };
 		CFE7F58A250EF50E003C7F3D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE7F589250EF50E003C7F3D /* SceneDelegate.swift */; };
 		CFE7F58C250EF50E003C7F3D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE7F58B250EF50E003C7F3D /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF085E09250F1438006F3B55 /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		CFE7F584250EF50E003C7F3D /* useGPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = useGPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE7F587250EF50E003C7F3D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CFE7F589250EF50E003C7F3D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				CFE7F587250EF50E003C7F3D /* AppDelegate.swift */,
 				CFE7F589250EF50E003C7F3D /* SceneDelegate.swift */,
 				CFE7F58B250EF50E003C7F3D /* ViewController.swift */,
+				CF085E09250F1438006F3B55 /* Stack.swift */,
 				CFE7F58D250EF50E003C7F3D /* Main.storyboard */,
 				CFE7F590250EF50F003C7F3D /* Assets.xcassets */,
 				CFE7F592250EF50F003C7F3D /* LaunchScreen.storyboard */,
@@ -138,6 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF085E0A250F1438006F3B55 /* Stack.swift in Sources */,
 				CFE7F58C250EF50E003C7F3D /* ViewController.swift in Sources */,
 				CFE7F588250EF50E003C7F3D /* AppDelegate.swift in Sources */,
 				CFE7F58A250EF50E003C7F3D /* SceneDelegate.swift in Sources */,

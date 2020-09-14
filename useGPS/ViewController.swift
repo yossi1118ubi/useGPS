@@ -14,12 +14,20 @@ class ViewController: UIViewController {
     /// ロケーションマネージャ
     var locationManager: CLLocationManager!
     
+    //更新を止めるFlag
+    var pause: Bool = false
+    
     //位置情報
     var location: CLLocation?
     // 緯度
     var latitude: CLLocationDegrees?
     // 経度
     var longitude: CLLocationDegrees?
+    
+    //ピンを格納するStack
+    var pinStack = Stack()
+    
+    
     
 
 
@@ -31,6 +39,7 @@ class ViewController: UIViewController {
         setupLocationManager()
         
     }
+    
     
     /// ロケーションマネージャのセットアップ
     func setupLocationManager() {
@@ -58,8 +67,18 @@ class ViewController: UIViewController {
     //経度を表示
     @IBOutlet weak var printLongitude: UILabel!
     
-    //位置情報を表示するボタン
-    @IBAction func location(_ sender: Any) {
+    @IBAction func pause(_ sender: Any) {
+        if pause == false{
+            self.pause = true
+            (sender as AnyObject).setTitle("再開", for: .normal)
+        }else{
+            self.pause = false
+            (sender as AnyObject).setTitle("一時停止", for: .normal)
+        }
+    }
+    
+    //位置情報を更新する関数
+    func updatelocation() {
         
         // マネージャの設定
         let status = CLLocationManager.authorizationStatus()
@@ -105,18 +124,29 @@ class ViewController: UIViewController {
             
             self.map.addAnnotation(pin)
             
-            //緯度経度を中心に半径500mの範囲を表示
-            self.map.region = MKCoordinateRegion(center: targetCoordinate, latitudinalMeters: 500.0, longitudinalMeters: 500.0)
+            //ピンをプッシュ
+            pinStack.push(pinPush: pin)
+            
+            //緯度経度を中心に半径20mの範囲を表示
+            self.map.region = MKCoordinateRegion(center: targetCoordinate, latitudinalMeters: 20.0, longitudinalMeters: 20.0)
             
         }
         
         
     }
     
-    //リセットボタン
+    //リセットボタン(ピンを削除)
     @IBAction func reset(_ sender: Any) {
-        self.printLatitude.text = "ここに緯度を表示します"
-        self.printLongitude.text = "ここに経度を表示します"
+
+        for pins in pinStack.stackArray{
+            if let pin = pinStack.pop() {
+                self.map.removeAnnotation(pin)
+                print("削除前: \(pinStack.stackArray)")
+                print("\(pin)を削除しました")
+                print("削除後: \(pinStack.stackArray)")
+            }
+            print("#####\(pins)")
+        }
     }
 
     //マップ
@@ -135,6 +165,13 @@ extension ViewController: CLLocationManagerDelegate {
         self.location = locations.first
         self.latitude = location?.coordinate.latitude
         self.longitude = location?.coordinate.longitude
+        
+        //位置情報の更新をするかどうか
+        if pause == false{
+        //位置情報を更新
+        updatelocation()
+            
+        }
     }
 }
 
